@@ -22,14 +22,10 @@ app.use(methodOverride("_method"));                   // Middleware for using HT
 app.use(morgan('dev'));                               // Morgan for logging HTTP requests
 
 //----------------------------------------------------------------------------\\
-
 //Homepage
-app.get('/', (req, res) => {
-    res.send('hello friend!')
+app.get('/', async (req, res) => {
+    res.render('index.ejs')
 })
-
-
-
 
 
 
