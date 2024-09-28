@@ -7,6 +7,8 @@ const mongoose = require('mongoose');
 const methodOverride = require('method-override');
 const morgan = require('morgan');
 const session = require('express-session');
+const isSignedIn = require('./middleware/is-signed-in.js');
+
 
 //------------------------------ MONGO DATABASE ------------------------------\\
 //Set the port from environment variable or default to 3000
@@ -29,13 +31,8 @@ app.use(                                              // Creating a session, con
         secret: process.env.SESSION_SECRET,           // SESSION_SECRET is used in the encrypting and decrypting process.
         resave: false,
         saveUninitialized: true,                      // this allows us to create an empty session object.
-    })
-);
-
-
-
-// allows us to create an empty session object.
-
+        })
+      );
 
 //------------------------------ ROUTES ---------------------------------------\\
 //Home Page
@@ -45,16 +42,12 @@ app.get('/', async (req,res) => {
     });
 });
 
-app.use('/auth', authController);                       //The authController is essentially a set of routes defined in auth.js, managed by the router object.
+app.use('/auth', authController);                                                        //The authController is essentially a set of routes defined in auth.js, managed by the router object.
 
-app.get('/vip-lounge', (req, res) => {
-    if (req.session.user) {
-        res.send(`Welcome to the party ${req.session.user.username}!`);
-    } else {
-        res.send('Sorry, no guests allowed.');
-    }
+app.get('/vip-lounge', isSignedIn, 
+    (req, res) => {
+    res.send(`Welcome to the party ${req.session.user.username}!`);                // did it before the level up
 });
-
 
 //----------------------------------------------------------------------------\\
 app.listen(port, () => {

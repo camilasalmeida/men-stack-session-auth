@@ -10,7 +10,7 @@ router.get('/sign-up', async (req, res) => {
     res.render('auth/sign-up.ejs');
 })
 
-//-------------POST - Create a user----------\\
+//------------POST - Create a user--------\\
 router.post('/sign-up', async(req, res) => {
     //res.send('Form submission accepted!'); 
 
@@ -25,12 +25,22 @@ router.post('/sign-up', async(req, res) => {
     req.body.password = hashedPassword;                                             // The number 10 in the hashSync method represents the amount of salting we want the hashing function to execute.
 
     const user = await User.create(req.body);
-    res.send(`Thanks for signing up ${user.username}!`);
-})
+    //res.send(`Thanks for signing up ${user.username}!`);
+
+    req.session.user = {
+        username: user.username,    // Use the username from the created user
+        _id: user._id,              // Store the user's ID as well
+    };
+
+    req.session.save(() => {
+        res.redirect('/'); // Redirect to the landing page
+    });
+});
 //-------------------------------------------\\
 //GET
 router.get('/sign-in', (req, res) => {
     res.render('auth/sign-in.ejs')
+
 });
 
 //----- POST route to handle when a user submits their request from the sign-in page.---\\
@@ -60,7 +70,7 @@ router.post('/sign-in', async(req, res) => {
     res.redirect('/');
 });
 
-//----------------------------------------------\\
+//-------------------------------\\
 router.get('/sign-out', (req, res) => {
     //res.send('The user wants out!');
     req.session.destroy();
