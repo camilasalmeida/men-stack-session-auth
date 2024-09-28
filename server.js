@@ -8,6 +8,8 @@ const methodOverride = require('method-override');
 const morgan = require('morgan');
 const session = require('express-session');
 const isSignedIn = require('./middleware/is-signed-in.js');
+const passUserToView = require("./middleware/pass-user-to-view.js");
+
 
 
 //------------------------------ MONGO DATABASE ------------------------------\\
@@ -33,13 +35,13 @@ app.use(                                              // Creating a session, con
         saveUninitialized: true,                      // this allows us to create an empty session object.
         })
       );
+ // our custom middleware
+ app.use(passUserToView);     
 
 //------------------------------ ROUTES ---------------------------------------\\
 //Home Page
 app.get('/', async (req,res) => {
-    res.render('index.ejs', {
-        user: req.session.user,
-    });
+    res.render('index.ejs')
 });
 
 app.use('/auth', authController);                                                        //The authController is essentially a set of routes defined in auth.js, managed by the router object.
