@@ -6,6 +6,7 @@ const app = express();
 const mongoose = require('mongoose');
 const methodOverride = require('method-override');
 const morgan = require('morgan');
+const session = require('express-session');
 
 //------------------------------ MONGO DATABASE ------------------------------\\
 //Set the port from environment variable or default to 3000
@@ -20,18 +21,31 @@ mongoose.connection.on('connected', () => {
 
 //------------------------------ MIDDLEWARE ------------------------------\\
 
-app.use(express.urlencoded({ extended: false }));     // Middleware to parse URL-encoded data from forms.
+app.use(express.urlencoded({ extended: false }));      // Middleware to parse URL-encoded data from forms.
 app.use(methodOverride("_method"));                   // Middleware for using HTTP verbs such as PUT or DELETE
 app.use(morgan('dev'));                               // Morgan for logging HTTP requests
+app.use(                                              // Creating a session, configuring it. Session cookie 🍪
+    session({                                         // This middleware will automatically manage session data for each user request, ensuring a seamless and secure user experience throughout our application.
+        secret: process.env.SESSION_SECRET,           // SESSION_SECRET is used in the encrypting and decrypting process.
+        resave: false,
+        saveUninitialized: true,                      // this allows us to create an empty session object.
+    })
+);
+
+
+
+// allows us to create an empty session object.
+
 
 //------------------------------ ROUTES ---------------------------------------\\
-//Homepage
+//Home Page
 app.get('/', async (req,res) => {
-    res.render('index.ejs');
+    res.render('index.ejs', {
+        user: req.session.user,
+    });
 });
 
 app.use('/auth', authController);                       //The authController is essentially a set of routes defined in auth.js, managed by the router object.
-
 
 
 
