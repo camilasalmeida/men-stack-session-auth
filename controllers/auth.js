@@ -10,7 +10,7 @@ router.get('/sign-up', async (req, res) => {
     res.render('auth/sign-up.ejs');
 })
 
-//------POST - Create a user--------\\
+//-------------POST - Create a user----------\\
 router.post('/sign-up', async(req, res) => {
     //res.send('Form submission accepted!'); 
 
@@ -27,8 +27,7 @@ router.post('/sign-up', async(req, res) => {
     const user = await User.create(req.body);
     res.send(`Thanks for signing up ${user.username}!`);
 })
-//-------------------------------\\
-
+//-------------------------------------------\\
 //GET
 router.get('/sign-in', (req, res) => {
     res.render('auth/sign-in.ejs')
@@ -55,23 +54,18 @@ router.post('/sign-in', async(req, res) => {
     // There is a user AND they had the correct password. Time to make a session!
     // Avoid storing the password, even in hashed format, in the session.
     req.session.user = {                                                                 // Storing their username in the session.
-        username: userInDatabase.username,                                                // This code sets the user retrieved from the database as the user in the newly created session.
+        username: userInDatabase.username,                                               // This code sets the user retrieved from the database as the user in the newly created session.
         _id: userInDatabase._id,
     }
     res.redirect('/');
 });
 
-
-//-------------------------------\\
-
-
-
-
-
-
-
-
-
+//----------------------------------------------\\
+router.get('/sign-out', (req, res) => {
+    //res.send('The user wants out!');
+    req.session.destroy();
+    res.redirect('/');
+});
 
 
 

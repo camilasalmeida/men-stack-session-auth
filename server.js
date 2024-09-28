@@ -47,7 +47,13 @@ app.get('/', async (req,res) => {
 
 app.use('/auth', authController);                       //The authController is essentially a set of routes defined in auth.js, managed by the router object.
 
-
+app.get('/vip-lounge', (req, res) => {
+    if (req.session.user) {
+        res.send(`Welcome to the party ${req.session.user.username}!`);
+    } else {
+        res.send('Sorry, no guests allowed.');
+    }
+});
 
 
 //----------------------------------------------------------------------------\\
